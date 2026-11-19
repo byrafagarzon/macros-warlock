@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Macros Warlock Aflicción — WoW Forever</title>
+<style>
+  :root {
+    --bg: #14121a; --panel: #1e1b26; --line: #34303f; --text: #ece9f3; --muted: #a39fb0;
+    --morado: #8b7cf6; --morado-bg: #2c2550;
+    --azul: #4f9be8; --azul-bg: #16304d;
+    --def: #e0805a; --def-bg: #43231a;
+    --uti: #3fbf98; --uti-bg: #15362c;
+    --naranja: #e8923a; --naranja-bg: #45301a;
+    --verde: #5cc46a; --verde-bg: #1d3a22;
+    --rosa: #e86fa8; --rosa-bg: #44203a;
+    --mov: #7b7788; --mov-bg: #262330;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.6 "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 980px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 26px; font-weight: 600; margin: 0 0 4px; }
+  h2 { font-size: 19px; font-weight: 600; margin: 40px 0 12px; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; }
+  .macro { border-left: 4px solid var(--c); border-radius: 0 12px 12px 0; }
+  .macro h3 { margin: 0 0 4px; font-size: 17px; display: flex; align-items: center; gap: 10px; }
+  .tag { font-size: 12px; padding: 2px 10px; border-radius: 999px; background: var(--cbg); color: var(--c); font-weight: 600; }
+  .meta { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+  pre { background: #0f0d14; border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin: 0; overflow-x: auto; font: 13px/1.6 Consolas, monospace; color: #d9d4ff; }
+  .code-wrap { position: relative; }
+  .copy { position: absolute; top: 8px; right: 8px; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; font-size: 12px; cursor: pointer; }
+  .copy:hover { border-color: var(--c, var(--muted)); }
+  ol, ul { margin: 10px 0 0; padding-left: 20px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  td, th { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; }
+  th { color: var(--muted); font-weight: 500; }
+  .pad { display: grid; gap: 6px; }
+  .pad.t { grid-template-columns: repeat(6, 1fr); max-width: 640px; }
+  .pad.n { grid-template-columns: repeat(3, 1fr); max-width: 330px; }
+  .k { border-radius: 8px; padding: 8px 6px; text-align: center; font-size: 12px; min-height: 54px; display: flex; flex-direction: column; justify-content: center; border: 1px solid; }
+  .k b { font-size: 11px; opacity: .8; }
+  .ro { background: var(--morado-bg); border-color: var(--morado); }
+  .va { background: var(--azul-bg); border-color: var(--azul); }
+  .pr { background: var(--naranja-bg); border-color: var(--naranja); }
+  .rc { background: var(--verde-bg); border-color: var(--verde); }
+  .rv { background: var(--rosa-bg); border-color: var(--rosa); }
+  .dmg { background: #241f36; border-color: #4a4268; }
+  .de { background: var(--def-bg); border-color: var(--def); }
+  .ut { background: var(--uti-bg); border-color: var(--uti); }
+  .mv { background: var(--mov-bg); border-color: var(--mov); color: var(--muted); }
+  .fr { background: transparent; border: 1px dashed var(--line); color: #6b6778; }
+  .span2 { grid-column: span 2; } .span3 { grid-column: span 3; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+  .legend .k { min-height: 0; padding: 3px 10px; display: inline-block; }
+  .note { color: var(--muted); font-size: 13px; margin-top: 10px; }
+  .pending li { color: var(--muted); }
+  a { color: inherit; text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,.35); }
+  .k a { border-bottom: none; }
+  .sim { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .actbtn { position: relative; width: 64px; height: 64px; border: 2px solid #5a5468; border-radius: 6px; overflow: hidden; display: block; background: #000; }
+  .actbtn img { width: 100%; height: 100%; display: block; }
+  .actbtn span[class*="icon"], .actbtn ins { display: none !important; }
+  .gcd { position: absolute; inset: 0; pointer-events: none; }
+  .kb { position: absolute; top: 2px; right: 4px; font: 600 12px/1 Arial, sans-serif; color: #fff; text-shadow: 1px 1px 2px #000; pointer-events: none; }
+  .mname { position: absolute; bottom: 2px; left: 0; right: 0; text-align: center; font: 600 10px/1 Arial, sans-serif; color: #fff; text-shadow: 1px 1px 2px #000; pointer-events: none; }
+  .simtxt { min-width: 220px; }
+  .simtxt .now { font-size: 16px; font-weight: 600; }
+  .steps { display: flex; gap: 6px; margin-top: 8px; }
+  .steps img { width: 28px; height: 28px; border-radius: 4px; opacity: .35; border: 1px solid transparent; }
+  .steps img.on { opacity: 1; border-color: var(--morado); }
+  .simbtn { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 4px 12px; font-size: 13px; cursor: pointer; margin-top: 10px; }
+  .stage { display: grid; grid-template-columns: auto 1fr 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 760px) { .stage { grid-template-columns: 1fr; } }
+  .castbar { width: 160px; height: 14px; border: 1px solid #5a5468; border-radius: 3px; margin-top: 10px; background: #000; position: relative; visibility: hidden; }
+  .castbar i { position: absolute; inset: 0 auto 0 0; width: 0; background: #e8b23a; }
+  .castbar span { position: absolute; inset: 0; font: 600 10px/14px Arial, sans-serif; color: #fff; text-align: center; text-shadow: 1px 1px 1px #000; }
+  .frame { background: #0f0d14; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; position: relative; }
+  .frame .fname { font-weight: 600; font-size: 14px; display: flex; justify-content: space-between; }
+  .bar { height: 14px; border-radius: 3px; background: #2a2733; margin-top: 6px; position: relative; overflow: hidden; }
+  .bar i { position: absolute; inset: 0 auto 0 0; transition: width .25s; }
+  .bar span { position: absolute; inset: 0; font: 600 10px/14px Arial, sans-serif; color: #fff; text-align: center; text-shadow: 1px 1px 1px #000; }
+  .hp i { background: #2fa84f; } .mp i { background: #2f6fd8; }
+  .debuffs { display: flex; gap: 6px; margin-top: 8px; min-height: 52px; }
+  .db { width: 32px; text-align: center; font: 600 11px/1.2 Arial, sans-serif; }
+  .db img { width: 32px; height: 32px; border: 1px solid #b23a3a; border-radius: 3px; display: block; }
+  .fct { position: absolute; left: 0; right: 0; top: -6px; height: 0; pointer-events: none; }
+  .fct b { position: absolute; font: 700 15px/1 Arial, sans-serif; text-shadow: 1px 1px 2px #000; animation: up 1.2s ease-out forwards; }
+  @keyframes up { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-34px); opacity: 0; } }
+  .log { font-size: 12px; color: var(--muted); margin-top: 10px; min-height: 18px; }
+</style>
+<script>window.whTooltips = { colorLinks: false, iconizeLinks: true, renameLinks: false, iconSize: 'small' };</script>
+<script src="https://wow.zamimg.com/widgets/power.js"></script>
+</head>
+<body>
+<main>
+  <h1>Macros Warlock Aflicción — WoW Forever</h1>
+  <p class="sub">Cliente en inglés · Voidwalker como tanque · Tartarus V2 Pro + Naga V2 HyperSpeed</p>
+
+  <h2>Macros aprobados</h2>
+
+  <div class="card macro" style="--c: var(--morado); --cbg: var(--morado-bg);">
+    <h3>1. Rotacion <span class="tag">Morado · Tartarus 14</span></h3>
+    <p class="meta">Abre cada mob en 4 pulsaciones: CoE → Bane of Agony → Corruption → Immolate. Life Tap va aparte, en la tecla 16, cuando tú decidas. Créalo con el icono "?".</p>
+    <div class="code-wrap"><button class="copy">Copiar</button><pre>#showtooltip
+/tar [@mouseover,harm,nodead]
+/targetenemy [noharm][dead]
+/petattack [harm,nodead]
+/castsequence [nochanneling] reset=target Curse of the Elements,Bane of Agony,Corruption,Immolate
+/cast Torment</pre></div>
+    <table style="margin-top:14px">
+      <tr><th>Pulsación</th><th>Tú</th><th>Pet</th></tr>
+      <tr><td>1 (0.0 s)</td><td><a href="https://www.wowhead.com/forever/spell=1490">Curse of the Elements</a></td><td>Sale hacia el mob</td></tr>
+      <tr><td>2 (1.5 s)</td><td><a href="https://www.wowhead.com/forever/spell=980">Bane of Agony</a></td><td>Se encuentra con el mob (~2 s) y usa <a href="https://www.wowhead.com/forever/spell=3716">Torment</a></td></tr>
+      <tr><td>3 (3.0 s)</td><td><a href="https://www.wowhead.com/forever/spell=172">Corruption</a></td><td>Pegando</td></tr>
+      <tr><td>4 (4.5 s)</td><td><a href="https://www.wowhead.com/forever/spell=348">Immolate</a> (impacta a los 6.5 s)</td><td>Ya tiene el agro</td></tr>
+    </table>
+    <p class="note">Cuando el icono vuelve a Curse of the Elements, la secuencia terminó: no lo pulses otra vez con ese mob. Activa el lanzamiento automático de Torment (clic derecho en la barra del pet).</p>
+  </div>
+
+
+
+  <div class="card macro" style="--c: var(--morado); --cbg: var(--morado-bg);">
+    <h3>Vista previa del botón Rotacion <span class="tag">Simulación</span></h3>
+    <p class="meta">El botón muestra el siguiente hechizo de la secuencia, con el cooldown global de 1.5 s entre pulsaciones e Immolate con su lanzamiento de 2 s. A la derecha, el enemigo recibe los debuffs con su duración y sus ticks. Daño aproximado de Classic a nivel 24, sin poder de hechizos: solo para ver el ritmo.</p>
+    <div class="stage">
+      <div>
+        <a class="actbtn" id="actbtn" href="https://www.wowhead.com/forever/spell=1490">
+          <img id="acticon" src="https://wow.zamimg.com/images/wow/icons/large/spell_shadow_chilltouch.jpg" alt="">
+          <canvas class="gcd" id="gcd" width="64" height="64"></canvas>
+          <span class="kb">14</span><span class="mname">Rotacion</span>
+        </a>
+        <div class="castbar" id="castbar"><i id="castfill"></i><span>Immolate</span></div>
+        <div class="log" id="simlog">Preparado</div>
+        <button class="simbtn" id="simtoggle">Pausar</button>
+        <button class="simbtn" id="simspeed">Velocidad x1</button>
+      </div>
+      <div class="frame">
+        <div class="fname"><span>Tú</span><span style="color:var(--muted);font-weight:400">Warlock 24</span></div>
+        <div class="bar hp"><i id="php" style="width:100%"></i><span id="phpt"></span></div>
+        <div class="bar mp"><i id="pmp" style="width:100%"></i><span id="pmpt"></span></div>
+        <div class="log">Maná gastado en la apertura</div>
+      </div>
+      <div class="frame">
+        <div class="fct" id="fct"></div>
+        <div class="fname"><span>Mob de prueba</span><span style="color:var(--muted);font-weight:400">Nivel 24</span></div>
+        <div class="bar hp"><i id="ehp" style="width:100%"></i><span id="ehpt"></span></div>
+        <div class="debuffs" id="debuffs"></div>
+      </div>
+    </div>
+  </div>
+  <div class="card macro" style="--c: var(--azul); --cbg: var(--azul-bg);">
+    <h3>2. Varita <span class="tag">Azul · Tartarus 17</span></h3>
+    <p class="meta">Remata al mob cuando termina la secuencia y tu vida está alta. El "!" evita que se apague si pulsas dos veces.</p>
+    <div class="code-wrap"><button class="copy">Copiar</button><pre>#showtooltip
+/cast !Shoot</pre></div>
+  </div>
+
+  <div class="card macro" style="--c: var(--naranja); --cbg: var(--naranja-bg);">
+    <h3>3. PetRescate <span class="tag">Naranja · Naga 2</span></h3>
+    <p class="meta">Cuando un segundo mob te pega a ti: pasa el ratón por encima y pulsa. El Voidwalker va a por él y usa Torment, sin cambiar tu objetivo. Sin mouseover, actúa sobre tu objetivo actual.</p>
+    <div class="code-wrap"><button class="copy">Copiar</button><pre>#showtooltip Torment
+/petattack [@mouseover,harm,nodead][]
+/cast [@mouseover,harm,nodead][] Torment</pre></div>
+    <ul>
+      <li>Si el pet está lejos, el primer Torment puede fallar; con el lanzamiento automático de Torment activado lo usa al llegar.</li>
+      <li>Ojo: Rotacion lleva <code>/petattack</code>, así que si la pulsas después, el pet vuelve a tu objetivo principal.</li>
+      <li>Para devolver el pet a tu objetivo cuando el mob extra ya no te pegue, usa Pet ataca (Tartarus 9).</li>
+    </ul>
+  </div>
+
+  <div class="card macro" style="--c: var(--verde); --cbg: var(--verde-bg);">
+    <h3>4. Recuperar <span class="tag">Verde · Tartarus 22</span></h3>
+    <p class="meta">En combate usa la mejor Healthstone que tengas; fuera de combate fabrica una nueva (consume un Soul Shard).</p>
+    <div class="code-wrap"><button class="copy">Copiar</button><pre>#showtooltip
+/use [combat] Major Healthstone
+/use [combat] Greater Healthstone
+/use [combat] Healthstone
+/use [combat] Lesser Healthstone
+/use [combat] Minor Healthstone
+/cast [nocombat] Create Healthstone</pre></div>
+    <p class="note">El [combat] en las líneas de uso evita comerte la piedra por accidente al pulsarlo fuera de combate para fabricar otra.</p>
+  </div>
+
+  <div class="card macro" style="--c: var(--rosa); --cbg: var(--rosa-bg);">
+    <h3>5. Revivir <span class="tag">Rosa · Tartarus 1</span></h3>
+    <p class="meta">Sin pet invoca al Voidwalker (consume un Soul Shard); con pet lanza Health Funnel para curarlo (canalizado, quédate quieto).</p>
+    <div class="code-wrap"><button class="copy">Copiar</button><pre>#showtooltip
+/cast [nopet] Summon Voidwalker; Health Funnel</pre></div>
+  </div>
+
+  <h2>Distribución de teclas</h2>
+  <div class="legend">
+    <span class="k ro">Rotacion (macro)</span><span class="k va">Varita (macro)</span><span class="k pr">PetRescate (macro)</span><span class="k rc">Recuperar (macro)</span><span class="k rv">Revivir (macro)</span>
+    <span class="k dmg">Daño</span><span class="k de">Defensivos</span><span class="k ut">Utilidad / pet</span>
+    <span class="k mv">Movimiento / modificador</span><span class="k fr">Libre</span>
+  </div>
+
+  <div class="card">
+    <p class="meta">Razer Tartarus V2 Pro · joystick = W A S D (Synapse: modo teclado, orientación Default)</p>
+    <div class="pad t">
+      <div class="k rv"><b>1</b><a href="https://www.wowhead.com/forever/spell=697">Revivir</a></div><div class="k ut"><b>2</b><a href="https://www.wowhead.com/forever/spell=687">Demon Skin</a></div><div class="k ut"><b>3</b>Montura</div><div class="k ut"><b>4</b>Caña / bastón</div><div class="k ut"><b>5</b><a href="https://www.wowhead.com/forever/item=6948">Hearthstone</a></div><div class="k fr"><b>6</b>Libre</div>
+      <div class="k mv"><b>7</b>Tab: objetivo</div><div class="k dmg"><b>8</b><a href="https://www.wowhead.com/forever/spell=1120">Drain Soul</a></div><div class="k ut"><b>9</b>Pet ataca</div><div class="k ut"><b>10</b>Pet vuelve</div><div class="k fr"><b>11</b>Libre</div><div class="k fr"><b>12</b>Libre</div>
+      <div class="k fr"><b>13</b>Libre</div><div class="k ro"><b>14</b>Rotacion</div><div class="k dmg"><b>15</b><a href="https://www.wowhead.com/forever/spell=689">Drain Life</a></div><div class="k dmg"><b>16</b><a href="https://www.wowhead.com/forever/spell=1454">Life Tap</a></div><div class="k va"><b>17</b><a href="https://www.wowhead.com/forever/spell=5019">Varita</a></div><div class="k fr"><b>18</b>Libre</div>
+      <div class="k mv"><b>19</b>Shift (mod.)</div><div class="k de"><b>20</b><a href="https://www.wowhead.com/forever/spell=7744">Will of the Forsaken</a></div><div class="k de"><b>21</b><a href="https://www.wowhead.com/forever/spell=7812">Sacrifice</a></div><div class="k rc"><b>22</b><a href="https://www.wowhead.com/forever/item=5512">Recuperar</a></div><div class="k fr span2"><b>23</b>Libre</div>
+      <div class="k mv"><b>24</b>Ctrl (mod.)</div><div class="k fr"><b>25</b>Libre</div><div class="k fr"><b>26</b>Libre</div><div class="k mv span3"><b>27</b>Saltar</div>
+    </div>
+    <p class="meta" style="margin:16px 0 8px">Zona del pulgar</p>
+    <div class="pad" style="grid-template-columns: repeat(5, 1fr); max-width: 640px;">
+      <div class="k mv"><b>Joystick</b>Moverse (W A S D)</div>
+      <div class="k mv"><b>Pulsar joystick</b>Auto-correr</div>
+      <div class="k mv"><b>Hypershift</b>Mantener: segunda capa de teclas</div>
+      <div class="k fr"><b>Keymap Cycle</b>Cambia de mapa de teclas</div>
+      <div class="k fr"><b>Profile Cycle</b>Cambia de perfil</div>
+    </div>
+    <p class="note">Los tres botones junto al joystick son dedicados: Hypershift, Keymap Cycle y Profile Cycle. Hypershift duplica todas las teclas mientras lo mantienes; úsalo cuando te falte espacio.</p>
+  </div>
+
+  <div class="card">
+    <p class="meta">Razer Naga V2 HyperSpeed · rejilla del pulgar (envía teclas del teclado numérico para no chocar con el Tartarus)</p>
+    <div class="pad n">
+      <div class="k de"><b>1</b><a href="https://www.wowhead.com/forever/spell=5782">Fear (mouseover)</a></div><div class="k pr"><b>2</b><a href="https://www.wowhead.com/forever/spell=3716">PetRescate</a></div><div class="k dmg"><b>3</b>DoTMouse</div>
+      <div class="k dmg"><b>4</b><a href="https://www.wowhead.com/forever/spell=172">Corruption</a></div><div class="k dmg"><b>5</b><a href="https://www.wowhead.com/forever/spell=980">Bane of Agony</a></div><div class="k dmg"><b>6</b><a href="https://www.wowhead.com/forever/spell=348">Immolate</a></div>
+      <div class="k dmg"><b>7</b><a href="https://www.wowhead.com/forever/spell=1490">Curse of the Elements</a></div><div class="k fr"><b>8</b>Libre</div><div class="k fr"><b>9</b>Libre</div>
+      <div class="k fr"><b>10</b>Libre</div><div class="k fr"><b>11</b>Libre</div><div class="k fr"><b>12</b>Libre</div>
+    </div>
+  </div>
+
+  <h2>Notas de uso</h2>
+  <div class="card">
+    <ul>
+      <li>Life Tap no te mata: si no tienes vida suficiente, falla. El riesgo es empezar el siguiente pull con poca vida.</li>
+      <li>Contra un mob que pega fuerte, espera 2–3 s tras la primera pulsación para que el pet asegure el agro.</li>
+      <li>En combates largos, refresca Corruption, Bane of Agony e Immolate desde sus teclas sueltas (Naga 4–6) cuando se acaben.</li>
+      <li>En WoW, asigna A y D a "Strafe Left" y "Strafe Right" en vez de girar.</li>
+    </ul>
+  </div>
+
+  <h2>PvP (en desarrollo)</h2>
+  <div class="card pending">
+    <ul>
+      <li>Sacrifice: escudo instantáneo de emergencia con el Voidwalker</li>
+      <li>Fear de reacción con /stopcasting y mouseover</li>
+      <li>Healthstone: usa la mejor que tengas</li>
+    </ul>
+    <p class="note">Plan base: Fear antes de que llegue el melee → Corruption y Bane mientras huye → Fear de nuevo. Emergencia: Sacrifice → Fear → Healthstone.</p>
+  </div>
+</main>
+<script>
+  document.querySelectorAll('.copy').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.nextElementSibling.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copiado';
+        setTimeout(() => { btn.textContent = 'Copiar'; }, 1500);
+      });
+    });
+  });
+</script>
+<script>
+  (function () {
+    const icon = n => 'https://wow.zamimg.com/images/wow/icons/large/' + n + '.jpg';
+    const S = {
+      coe: { name: 'Curse of the Elements', id: 1490, ic: 'spell_shadow_chilltouch', dur: 300 },
+      bane: { name: 'Bane of Agony', id: 980, ic: 'spell_shadow_curseofsargeras', dur: 24 },
+      corr: { name: 'Corruption', id: 172, ic: 'spell_shadow_abominationexplosion', dur: 18 },
+      imm: { name: 'Immolate', id: 348, ic: 'spell_fire_immolation', dur: 15 },
+      tap: { name: 'Life Tap', id: 1454, ic: 'spell_shadow_burningspirit' }
+    };
+    const presses = [
+      { t: 0, k: 'coe', cast: 0, mana: 45 },
+      { t: 1.5, k: 'bane', cast: 0, mana: 50 },
+      { t: 3.0, k: 'corr', cast: 0, mana: 55 },
+      { t: 4.5, k: 'imm', cast: 2.0, mana: 70 }
+    ];
+    const order = ['coe', 'bane', 'corr', 'imm'];
+    const shadow = '#b79bff', fire = '#ff9a3c';
+    const ev = [];
+    const agony = [11, 11, 11, 11, 22, 22, 22, 22, 33, 33, 33, 33];
+    agony.forEach((d, i) => ev.push({ t: 1.5 + 2 * (i + 1), dmg: d, c: shadow, src: 'Bane' }));
+    for (let i = 1; i <= 6; i++) ev.push({ t: 3.0 + 3 * i, dmg: 37, c: shadow, src: 'Corruption' });
+    ev.push({ t: 6.5, dmg: 81, c: fire, src: 'Immolate' });
+    for (let i = 1; i <= 5; i++) ev.push({ t: 6.5 + 3 * i, dmg: 30, c: fire, src: 'Immolate' });
+    ev.sort((a, b) => a.t - b.t);
+    const MOB = 760, PHP = 480, PMP = 520, END = 28;
+
+    const $ = id => document.getElementById(id);
+    const btn = $('actbtn'), img = $('acticon'), cv = $('gcd'), ctx = cv.getContext('2d');
+    let t = 0, last = performance.now(), paused = false, speed = 1;
+    let state;
+    function reset() {
+      state = { mob: MOB, hp: PHP, mp: PMP, next: 0, ev: 0, deb: {}, gcdStart: -9, castStart: -9, castEnd: -9, done: false };
+      $('debuffs').innerHTML = '';
+      setIcon('coe'); log('Preparado');
+    }
+    function setIcon(k) {
+      img.src = icon(S[k].ic);
+      btn.href = 'https://www.wowhead.com/forever/spell=' + S[k].id;
+    }
+    function log(x) { $('simlog').textContent = x; }
+    function float(txt, c) {
+      const b = document.createElement('b');
+      b.textContent = txt; b.style.color = c;
+      b.style.left = (20 + Math.random() * 60) + '%';
+      $('fct').appendChild(b);
+      setTimeout(() => b.remove(), 1200);
+    }
+    function addDebuff(k) {
+      const d = document.createElement('div');
+      d.className = 'db';
+      d.innerHTML = '<a href="https://www.wowhead.com/forever/spell=' + S[k].id + '"><img src="' + icon(S[k].ic) + '" alt=""></a><span></span>';
+      $('debuffs').appendChild(d);
+      state.deb[k] = { el: d, until: t + S[k].dur };
+    }
+    function fmt(x) { return x >= 60 ? Math.ceil(x / 60) + 'm' : Math.ceil(x) + 's'; }
+    function step() {
+      while (state.next < presses.length && t >= presses[state.next].t) {
+        const p = presses[state.next];
+        state.gcdStart = p.t;
+        state.mp -= p.mana;
+        if (p.cast) {
+          state.castStart = p.t; state.castEnd = p.t + p.cast;
+          log('Lanzando ' + S[p.k].name + '…');
+        } else {
+          if (S[p.k].dur) addDebuff(p.k);
+          if (p.k === 'tap') { state.hp -= 120; state.mp = Math.min(PMP, state.mp + 120); float('Life Tap', '#7fb3ff'); }
+          log(S[p.k].name);
+          const nk = order.at(order.indexOf(p.k) + 1);
+          if (nk) setIcon(nk); else { setIcon('coe'); state.done = true; log('Secuencia terminada: ahora varita o Drain Life'); }
+        }
+        state.next++;
+      }
+      if (state.castEnd > 0 && t >= state.castEnd) {
+        addDebuff('imm'); setIcon('coe'); state.done = true; log('Immolate impacta: secuencia terminada. Ahora Life Tap (16), varita o Drain Life'); state.castEnd = -9;
+      }
+      while (state.ev < ev.length && t >= ev[state.ev].t) {
+        const e = ev[state.ev];
+        state.mob = Math.max(0, state.mob - e.dmg);
+        float('-' + e.dmg, e.c);
+        state.ev++;
+      }
+      for (const k in state.deb) {
+        const d = state.deb[k], left = d.until - t;
+        if (left <= 0) { d.el.remove(); delete state.deb[k]; }
+        else d.el.querySelector('span').textContent = fmt(left);
+      }
+    }
+    function render() {
+      $('ehp').style.width = (state.mob / MOB * 100) + '%';
+      $('ehpt').textContent = state.mob + ' / ' + MOB;
+      $('php').style.width = (state.hp / PHP * 100) + '%';
+      $('phpt').textContent = state.hp + ' / ' + PHP;
+      $('pmp').style.width = (state.mp / PMP * 100) + '%';
+      $('pmpt').textContent = state.mp + ' / ' + PMP;
+      ctx.clearRect(0, 0, 64, 64);
+      const g = (t - state.gcdStart) / 1.5;
+      if (g >= 0 && g < 1) {
+        ctx.fillStyle = 'rgba(0,0,0,0.6)';
+        ctx.beginPath(); ctx.moveTo(32, 32);
+        ctx.arc(32, 32, 50, -Math.PI / 2 + g * 2 * Math.PI, 1.5 * Math.PI);
+        ctx.closePath(); ctx.fill();
+      }
+      const cb = $('castbar');
+      if (state.castEnd > 0 && t >= state.castStart) {
+        cb.style.visibility = 'visible';
+        $('castfill').style.width = ((t - state.castStart) / (state.castEnd - state.castStart) * 100) + '%';
+      } else cb.style.visibility = 'hidden';
+    }
+    reset();
+    function tick(now) {
+      const dt = (now - last) / 1000; last = now;
+      if (!paused) {
+        t += dt * speed;
+        if (t >= END) { t = 0; reset(); }
+        step(); render();
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    $('simtoggle').addEventListener('click', e => { paused = !paused; e.target.textContent = paused ? 'Reanudar' : 'Pausar'; });
+    $('simspeed').addEventListener('click', e => { speed = speed === 1 ? 0.5 : speed === 0.5 ? 2 : 1; e.target.textContent = 'Velocidad x' + speed; });
+  })();
+</script>
+</body>
+</html>
