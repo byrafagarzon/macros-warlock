@@ -36,8 +36,8 @@
   td, th { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; }
   th { color: var(--muted); font-weight: 500; }
   .pad { display: grid; gap: 6px; }
-  .pad.t { grid-template-columns: repeat(6, 1fr); max-width: 640px; }
-  .pad.n { grid-template-columns: repeat(3, 1fr); max-width: 330px; }
+  .pad.t { grid-template-columns: repeat(6, minmax(0, 1fr)); max-width: 640px; }
+  .pad.n { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 330px; }
   .k { border-radius: 8px; padding: 8px 6px; text-align: center; font-size: 12px; min-height: 54px; display: flex; flex-direction: column; justify-content: center; border: 1px solid; }
   .k b { font-size: 11px; opacity: .8; }
   .ro { background: var(--morado-bg); border-color: var(--morado); }
@@ -88,6 +88,22 @@
   .fct b { position: absolute; font: 700 15px/1 Arial, sans-serif; text-shadow: 1px 1px 2px #000; animation: up 1.2s ease-out forwards; }
   @keyframes up { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-34px); opacity: 0; } }
   .log { font-size: 12px; color: var(--muted); margin-top: 10px; min-height: 18px; }
+  .pad.thumb { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .k { overflow-wrap: break-word; hyphens: auto; }
+  @media (max-width: 640px) {
+    main { padding: 20px 10px 48px; }
+    .card { padding: 14px 12px; }
+    .pad { gap: 4px; }
+    .k { font-size: 9.5px; line-height: 1.25; padding: 5px 1px; min-height: 48px; border-radius: 6px; }
+    .k b { font-size: 9.5px; }
+    .k a { display: block; }
+    .k a span[class*="icon"], .k a ins { display: block !important; margin: 2px auto; transform: scale(.8); }
+    .pad.thumb { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .legend .k { font-size: 11px; }
+    .macro h3 { flex-wrap: wrap; }
+    pre { font-size: 11.5px; }
+    .stage { gap: 14px; }
+  }
 </style>
 <script>window.whTooltips = { colorLinks: false, iconizeLinks: true, renameLinks: false, iconSize: 'small' };</script>
 <script src="https://wow.zamimg.com/widgets/power.js"></script>
@@ -206,7 +222,7 @@
       <div class="k mv"><b>24</b>Ctrl (mod.)</div><div class="k fr"><b>25</b>Libre</div><div class="k fr"><b>26</b>Libre</div><div class="k mv span3"><b>27</b>Saltar</div>
     </div>
     <p class="meta" style="margin:16px 0 8px">Zona del pulgar</p>
-    <div class="pad" style="grid-template-columns: repeat(5, 1fr); max-width: 640px;">
+    <div class="pad thumb" style="max-width: 640px;">
       <div class="k mv"><b>Joystick</b>Moverse (W A S D)</div>
       <div class="k mv"><b>Pulsar joystick</b>Auto-correr</div>
       <div class="k mv"><b>Hypershift</b>Mantener: segunda capa de teclas</div>
